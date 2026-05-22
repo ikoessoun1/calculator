@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practice Document</title>
+
+  <style>
+
+    body{
+      height: 80vh;
+      width: 100vw;
+      font-size: 24;
+      overflow: scroll;
+    }
+    .calculator{
+      width: 400px;
+      min-height:680px;
+      border: solid rgb(165, 148, 251) 4px;
+      background-color: rgb(29, 28, 28);
+      padding: 0.6em;
+      border-radius: 48px;
+      padding: 8px;
+    }
+
+    .calculator > h1{
+      border-radius: 12px;
+      background-color: rgb(44, 44, 44);
+      color:rgb(223, 250, 250);
+      text-align: center;
+    }
+    #answer-box{
+      background-color: rgb(72, 72, 71);
+      min-height: 56px;
+      font-weight: 600;
+      font-size: 48px;
+      color: rgb(247, 244, 244);
+      border-radius: 24px;
+      margin-top: 28px;
+      word-wrap: break-word;
+      
+    }
+
+    .buttons{
+      margin-top: 44px;
+      display: grid;
+      grid-template-columns: repeat(4);
+      column-gap: 8px;
+      row-gap: 8px;
+      grid-template-areas: 
+        "clear . reset division"
+        "one two three addition"
+        "four five six subtraction"
+        "seven eight nine multiplication"
+        "dot zero equal  .";
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn , .operator-btn{
+      border-radius: 50%;
+      color: whitesmoke;
+      width: 88px;
+      height: 88px;
+      border: none;
+      padding: 0;
+      margin: 0;
+      font-weight: 600;
+      font-size: 24px;
+    
+    }
+    .btn{
+      background-color: rgb(46, 44, 39);
+    }
+    .operator-btn{
+      background-color: rgb(228, 155, 20);
+      border: solid rgb(223, 250, 250) 1px;
+    }
+
+    
+  </style>
+</head>
+<body>
+  <section class="calculator">
+    <h1>CALCULATE</h1>
+
+    <div id="answer-box">
+      
+    </div>
+    <div class="buttons">
+      <input type="button"  value="1" class="btn" style="grid-area: one;">
+      <input type="button"  value="2" class="btn" style="grid-area: two;">
+      <input type="button"  value="3" class="btn" style="grid-area: three;">
+      <input type="button"  value="4" class="btn" style="grid-area: four;">
+      <input type="button"  value="5" class="btn" style="grid-area: five;">
+      <input type="button"  value="6" class="btn" style="grid-area: six;">
+      <input type="button"  value="7" class="btn" style="grid-area: seven;">
+      <input type="button"  value="8" class="btn" style="grid-area: eight;">
+      <input type="button"  value="9" class="btn" style="grid-area: nine;">
+      <input type="button"  value="0" class="btn" style="grid-area: zero;">
+      <input type="button"  value="." class="btn" style="grid-area: dot;">
+      <input type="button"  value="+" class="operation operator-btn" style="grid-area: addition;">
+      <input type="button"  value="-" class="operation operator-btn" style="grid-area: subtraction;">
+      <input type="button"  value="/" class="operation operator-btn" style="grid-area: division;">
+      <input type="button"  value="*" class="operation operator-btn" style="grid-area: multiplication;">
+      <input type="button"  value="=" class="operator-btn" id="equal-btn" style="grid-area: equal;">
+      <input type="button"  value="Reset" class="operator-btn" id="reset" style="grid-area: reset;">
+      <input type="button"  value="C" class="operator-btn" id="clear" style="grid-area: clear;">
+    </div>
+  </section>
+  
+</body>
+<script>
+
+  var buttons = document.querySelectorAll(".btn");
+  var display = document.getElementById('answer-box');
+  var resetBtn = document.querySelector("#reset");
+  var equalBtn = document.querySelector("#equal-btn");
+  var clearBtn = document.querySelector("#clear")
+  
+  buttons.forEach((button) =>{
+    // button.Onclick = appendToDisplay(button.getAttribute("value"))
+    let num = button.getAttribute("value")
+    button.addEventListener("click", () =>{
+      appendToDisplay(num);
+      number.push(num);
+      console.log(`Numbers = ${number}`);
+    })
+  })
+
+  resetBtn.addEventListener("click", () => {
+    reset();
+    console.log(`Numbers = ${number}`);
+  })
+  
+  var operations = document.querySelectorAll('.operation');
+  operations.forEach((operator) => {
+    operator.addEventListener("click", () =>{
+      let value = operator.getAttribute("value");
+      appendToDisplay(value);
+      firstNumber = wrapNumber(number);
+      operate = operator.getAttribute("value");
+      console.log(`first number = ${firstNumber}`);
+      number = []
+    })
+  })
+
+  equalBtn.addEventListener("click", () =>{
+    secondNumber = wrapNumber(number);
+    console.log(`second number = ${secondNumber}`);
+    answer = calculate(firstNumber, secondNumber, operate)
+    appendToDisplay(" =" + answer)
+    console.log(`answer for ${firstNumber} ${operate} ${secondNumber} is ${answer}`)
+    number = []
+  })
+
+  clearBtn.addEventListener("click", () =>{
+    display.innerText = clear();
+  })
+  function appendToDisplay (input){
+    display.innerText += input;
+  }
+
+  function reset(){
+    display.innerText ="";
+    number = [];
+    firstNumber = undefined;
+    secondNumber = undefined;
+    operate = undefined;
+    answer = undefined;
+  }
+
+  function wrapNumber(numbers) {
+    let properNumber = Number(numbers.join(""));
+    return properNumber;
+  }
+
+  function clear(){
+    let operators = ["+", "-", "*", "/"];
+    let text = display.innerText;
+    const lastTextIsOperator = () => {
+      let lastText = text.slice(-1)
+      for(let operator of operators){
+        if (lastText.includes(operator)){
+          return true
+        }else{
+          return false
+        }
+      }
+    }
+
+    if (text.includes("=")){
+      reset();
+    }else{
+      if (lastTextIsOperator()){
+        number = String(firstNumber).split();
+        let newNumber = []
+        number.forEach((num)=>{
+          newNumber.push(Number(num))
+        })
+        number = newNumber
+        firstNumber=undefined;
+        return text.slice(0, -1) 
+      }else{
+          number.pop()
+          return text.slice(0, -1);
+        }
+    }
+  }
+  function calculate(firstNum, secondNum, operation){
+    let result;
+    try{
+      switch(operation){
+        case "*":
+          result = firstNum * secondNum
+          break
+        case "+":
+          result = firstNum + secondNum
+          break
+        case "/": 
+          result = firstNum / secondNum
+          break
+        case "-": 
+          result = firstNum - secondNum
+          break
+      }
+      return result
+
+    }catch(err){
+      console.log (err)
+    };
+  }
+
+/*I am building a calculator app to touch on the DOM. This is basic and should take the first number, operation and second number and calculate the answer in the answer-box.*/
+var number = [];
+var firstNumber;
+var secondNumber;
+var operate;
+var answer;
+
+
+
+
+</script>
+</html>
